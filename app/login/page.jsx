@@ -43,6 +43,7 @@ const Form = () => {
             </svg>
           </button>
         </div>
+        
         <p className="signup">Don't have an account?
           <a rel="noopener noreferrer" href="/register" className>Sign up</a>
         </p>
