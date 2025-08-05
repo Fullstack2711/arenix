@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const Form = () => {
   return (
     <StyledWrapper>
-      <div className="form-container m-auto mt-10 ">
+      <div className="form-container m-auto mt-10 mb-10">
         <p className="title">Login</p>
         <form className="form">
           <div className="input-group">
@@ -43,7 +43,7 @@ const Form = () => {
             </svg>
           </button>
         </div>
-        
+
         <p className="signup">Don't have an account?
           <a rel="noopener noreferrer" href="/register" className>Sign up</a>
         </p>

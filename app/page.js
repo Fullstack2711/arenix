@@ -23,7 +23,7 @@ export default function Home() {
       <div>
         <Chart  />
       </div>
-      <Footer />
+      
     </div>
   );
 }

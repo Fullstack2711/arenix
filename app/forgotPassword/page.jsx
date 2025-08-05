@@ -5,7 +5,7 @@ import styled from "styled-components";
 const ForgotPassword = () => {
   return (
     <StyledWrapper>
-      <div className="form-container m-auto mt-10">
+      <div className="form-container m-auto mt-10 mb-10">
         <p className="title">Forgot Password</p>
         <form className="form">
           <div className="input-group">

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const RegisterForm = () => {
   return (
     <StyledWrapper>
-      <div className="form-container m-auto mt-10">
+      <div className="form-container m-auto mt-10 mb-10">
         <p className="title">Register</p>
         <form className="form">
           <div className="input-group">
