@@ -6,8 +6,7 @@ export default () => {
   const [state, setState] = useState(false);
 
    const navigation = [
-    { title: "Turnirlar", path: "/turnir" },
-    { title: "O\'yinlar", path: "/oyin" },
+     { title: "O\'yinlar", path: "/oyin" },
     { title: "Jamoalar", path: "/jamoa" },
     { title: "Yangiliklar", path: "/yangilik" },
   
@@ -23,7 +22,7 @@ export default () => {
 
   const Brand = () => (
     <div className="flex items-center justify-between py-5 md:block">
-      <a href="javascript:void(0)">
+      <a href="/">
         <img
           src="/logo/logo-removebg-preview.png"
           width={100}
