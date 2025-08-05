@@ -2,9 +2,20 @@ import React from "react";
 
 const GamePromoCard = () => {
   return (
-    <div className="relative flex items-center justify-between p-4 mx-46 mt-24 h-110 bg-gradient-to-r from-blue-400 to-orange-500 text-white rounded-2xl">
+    <div>
+      {/* Game Promo Title */}
+      <div className="max-w-4xl mx-auto mb-6 sm:mb-8 lg:mb-12 mt-24 text-center">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-3 sm:mb-4 tracking-tight">
+          Maxsus Taklif
+        </h2>
+        <p className="text-base sm:text-lg lg:text-xl text-white max-w-2xl mx-auto leading-relaxed opacity-90">
+          O'yin hisobingizni yarating va sovg'alar oling
+        </p>
+      </div>
+
+      <div className="relative flex items-center justify-between p-4 mx-46 mt-24 h-110 bg-gradient-to-r from-blue-400 to-orange-500 text-white rounded-2xl">
       {/* 3D Character Image */}
-      <div className="absolute left-4 -top-20 h-110 w-120 transform hover:scale-105 transition-transform duration-300  z-20">
+      <div className="absolute left-4 -top-20 h-110 w-120  z-20">
         <img
           src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/2ec970f4-1706-4915-9a93-41f3d9c8202c/dh3f2fv-d27cc5cd-2599-4bbb-98bc-a3d2dee84647.png/v1/fill/w_966,h_828/blood_strike_ethan_png_by_divoras_dh3f2fv-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTA5NyIsInBhdGgiOiJcL2ZcLzJlYzk3MGY0LTE3MDYtNDkxNS05YTkzLTQxZjNkOWM4MjAyY1wvZGgzZjJmdi1kMjdjYzVjZC0yNTk5LTRiYmItOThiYy1hM2QyZGVlODQ2NDcucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.OMiqx6PxVYldm569bGZ7_nWlkE-HdtDW6sg8bSjzOPE"
           alt="Game character"
@@ -29,6 +40,7 @@ const GamePromoCard = () => {
           Присоединяйся сейчас
         </button>
       </div>
+    </div>
     </div>
   );
 };

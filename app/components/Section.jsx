@@ -32,9 +32,9 @@ function Section() {
             className="mx-auto"
           >
             <Image
-              src="/img/pngwing.com.png"
+              src="/game/dota.png"
               alt="Description of image"
-              width={500}
+              width={800}
               height={300}
               className="mx-auto"
             />

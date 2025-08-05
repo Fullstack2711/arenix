@@ -2,7 +2,18 @@ import React from "react";
 
 const Chart = () => {
   return (
-    <div className="relative flex flex-col lg:flex-row items-center justify-between p-4 sm:p-6 lg:p-8 xl:p-12 mx-2 sm:mx-4 lg:mx-8 xl:mx-16 mt-6 sm:mt-8 lg:mt-12 xl:mt-16 bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-400 text-white rounded-2xl sm:rounded-3xl overflow-hidden">
+    <div>
+      {/* Chart Title */}
+      <div className="max-w-4xl mx-auto mb-6 sm:mb-8 lg:mb-12 mt-24 text-center">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-3 sm:mb-4 tracking-tight">
+          Analitika Markazi
+        </h2>
+        <p className="text-base sm:text-lg lg:text-xl text-white max-w-2xl mx-auto leading-relaxed">
+          O'yin natijalaringizni kuzating va taraqqiyotingizni tahlil qiling
+        </p>
+      </div>
+
+      <div className="relative flex flex-col lg:flex-row items-center justify-between p-4 sm:p-6 lg:p-8 xl:p-12 mx-2 sm:mx-4 lg:mx-8 xl:mx-16 mt-6 sm:mt-8 lg:mt-12 xl:mt-16 bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-400 text-white rounded-2xl sm:rounded-3xl overflow-hidden">
       {/* Left Content */}
       <div className="flex-1 max-w-full lg:max-w-lg z-10 text-center lg:text-left mb-8 lg:mb-0">
         <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-6 leading-tight">
@@ -162,6 +173,7 @@ const Chart = () => {
         <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 -right-2 sm:-right-3 lg:-right-4 w-2 h-2 sm:w-2.5 sm:h-2.5 lg:w-3 lg:h-3 bg-pink-400 rounded-full animate-pulse delay-300"></div>
         <div className="absolute top-1/2 -right-1 sm:-right-1.5 lg:-right-2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full animate-ping delay-500"></div>
       </div>
+    </div>
     </div>
   );
 };

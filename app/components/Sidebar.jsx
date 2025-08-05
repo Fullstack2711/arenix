@@ -84,12 +84,12 @@ const Sidebar = () => {
       </nav>
 
       {/* PRO Account Section */}
-      <div className="p-4 border-t border-gray-800  ">
+      <div className="p-4 border-t border-gray-800  relative top-24  ">
         <motion.div
           whileHover={{ scale: 1.02 }}
           className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-0.5 rounded-xl"
         >
-          <div className="bg-gray-900 rounded-xl p-4 text-center">
+          <div className="bg-gray-900 rounded-xl p-4 text-center ">
             {/* Lightning Icon */}
             <div className="mx-auto mb-3 w-12 h-12 bg-gradient-to-br from-purple-500 to-orange-400 rounded-lg flex items-center justify-center">
               <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
