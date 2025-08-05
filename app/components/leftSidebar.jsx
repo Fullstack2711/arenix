@@ -10,10 +10,10 @@ const LeftSidebar = () => {
 
   const games = [
     { name: "Clash Royale", icon: "/game/clash.jpg" },
-    { name: "League of Legends", icon: "/game/clash.jpg" },
-    { name: "Gwent", icon: "/game/clash.jpg" },
-    { name: "Call of Duty", icon: "/game/clash.jpg" },
-    { name: "PUBG", icon: "/game/clash.jpg" },
+    { name: "League of Legends", icon: "/game/cs.png" },
+    { name: "Gwent", icon: "/img/pubg.jpg" },
+    { name: "Call of Duty", icon: "/game/cs.png" },
+    { name: "PUBG", icon: "/img/pubg.jpg" },
     { name: "Overwatch", icon: "/game/clash.jpg" },
  
    ];

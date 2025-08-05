@@ -6,15 +6,15 @@ import { motion } from "framer-motion";
 function Section() {
   return (
     <section className="relative">
-      <div className="relative z-10 max-w-screen-xl mx-auto px-4 py-2 md:px-8">
-        <div className="space-y-5 max-w-4xl mx-auto text-center">
+      <div className="relative z-10 max-w-screen-xl mx-auto  px-4 py-2 md:px-8">
+        <div className="space-y-4 max-w-4xl  mx-auto text-center ">
           <motion.h2
             initial={{ opacity: 0, x: 200 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             className="text-4xl text-white font-extrabold mx-auto md:text-5xl"
           >
-            Build and scale up your startup with the best tools
+            Katta turnirlarni kuzatib boring va ishtirok eting
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, x: 200 }}
@@ -39,53 +39,7 @@ function Section() {
               className="mx-auto"
             />
           </motion.div>
-          <div className="flex justify-center items-center gap-x-4 text-gray-400 text-sm">
-            <div className="flex">
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
-              </svg>
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
-              </svg>
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
-              </svg>
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
-              </svg>
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
-              </svg>
-            </div>
-            <p>
-              <span className="text-gray-100">5.0</span> by over 200 users
-            </p>
-          </div>
+         
         </div>
       </div>
       <div

@@ -4,6 +4,7 @@ import DashboardSection from "./components/dashboardSection";
 import Sidebar from "./components/Sidebar";
 import GamePromoCard from "./components/GamePromoCard ";
 import Chart from "./components/Chart";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <div>
         <Chart  />
       </div>
+      <Footer />
     </div>
   );
 }
