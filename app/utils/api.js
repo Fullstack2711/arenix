@@ -1,12 +1,12 @@
 const API_URL = 'http://198.211.96.176';
 
 // 🟢 LOGIN – token olish
-export async function login(username, password) {
+export async function login(email, password) {
   try {
-    const response = await fetch(`${API_URL}/api/token/`, {
+    const response = await fetch(`${API_URL}/users/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) throw new Error('Login failed');
@@ -21,7 +21,7 @@ export async function login(username, password) {
 // 🟢 REGISTER – foydalanuvchi yaratish
 export async function register(username, password, email) {
   try {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/users/register/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, email }),

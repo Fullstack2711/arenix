@@ -9,7 +9,7 @@ import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-w
 const Form = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
@@ -24,15 +24,16 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.username || !formData.password) {
-      toast.error('Username va parol kiritilishi shart!');
+    if (!formData.email || !formData.password) {
+      toast.error('Email va parol kiritilishi shart!');
       return;
     }
 
     setLoading(true);
 
     try {
-      const result = await login(formData.username, formData.password);
+      console.log('Login attempt with:', { email: formData.email, password: '***' });
+      const result = await login(formData.email, formData.password);
       
       if (result && result.access && result.refresh) {
         setTokens(result.access, result.refresh);
@@ -60,13 +61,13 @@ const Form = () => {
           <p className="title">Login</p>
           <form className="form" onSubmit={handleSubmit}>
             <div className="input-group">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="email">Email</label>
               <input 
                 type="text" 
-                name="username" 
-                id="username" 
-                placeholder="Username kiriting..."
-                value={formData.username}
+                name="email" 
+                id="email" 
+                placeholder="Email kiriting..."
+                value={formData.email}
                 onChange={handleChange}
                 disabled={loading}
               />
