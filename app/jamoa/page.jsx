@@ -1,5 +1,6 @@
 import React from 'react'
 import TeamCard from '../components/teamCard'
+import GamePromoCard from '../components/GamePromoCard '
 
 function page() {
   return (
@@ -13,6 +14,7 @@ function page() {
           Turnirdagi eng yaxshi jamoalar bilan tanishing
         </p>
       </div>
+    
 
       {/* Teams Grid */}
       <div className='max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6'>

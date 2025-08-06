@@ -1,26 +1,99 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-
+import { login } from '../utils/api';
+import { setTokens } from '../../lib/auth';
+import toast, { Toaster } from 'react-hot-toast';
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 const Form = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.username || !formData.password) {
+      toast.error('Username va parol kiritilishi shart!');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await login(formData.username, formData.password);
+      
+      if (result && result.access && result.refresh) {
+        setTokens(result.access, result.refresh);
+        toast.success('Muvaffaqiyatli login qildingiz!');
+        setTimeout(() => {
+          router.push('/home');
+        }, 1000);
+      } else {
+        toast.error('Login yoki parol noto\'g\'ri!');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Login jarayonida xatolik yuz berdi!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <StyledWrapper>
-      <div className="form-container m-auto mt-10 mb-10">
-        <p className="title">Login</p>
-        <form className="form">
-          <div className="input-group">
-            <label htmlFor="username">Username</label>
-            <input type="text" name="username" id="username" placeholder />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" placeholder />
-            <div className="forgot">
-              <a rel="noopener noreferrer" href="/forgotPassword">Forgot Password ?</a>
+    <BackgroundBeamsWithCollision>
+    <div className="flex items-center justify-center   p-6  ">
+      <Toaster position="top-right" />
+      <StyledWrapper>
+        <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5">
+          <p className="title">Login</p>
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="username">Username</label>
+              <input 
+                type="text" 
+                name="username" 
+                id="username" 
+                placeholder="Username kiriting..."
+                value={formData.username}
+                onChange={handleChange}
+                disabled={loading}
+              />
             </div>
-          </div>
-          <button className="sign">Sign in</button>
-        </form>
+            <div className="input-group">
+              <label htmlFor="password">Password</label>
+              <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                placeholder="Parol kiriting..."
+                value={formData.password}
+                onChange={handleChange}
+                disabled={loading}
+              />
+              <div className="forgot">
+                <a rel="noopener noreferrer" href="/forgotPassword">Forgot Password ?</a>
+              </div>
+            </div>
+            <button 
+              className="sign" 
+              type="submit" 
+              disabled={loading}
+            >
+              {loading ? 'Login qilinmoqda...' : 'Sign in'}
+            </button>
+          </form>
         <div className="social-message">
           <div className="line" />
           <p className="message">Login with social accounts</p>
@@ -45,10 +118,12 @@ const Form = () => {
         </div>
 
         <p className="signup">Don't have an account?
-          <a rel="noopener noreferrer" href="/register" className>Sign up</a>
+          <a rel="noopener noreferrer" href="/register">Sign up</a>
         </p>
       </div>
     </StyledWrapper>
+    </div>
+    </BackgroundBeamsWithCollision>
   );
 }
 

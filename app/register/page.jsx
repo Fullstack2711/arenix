@@ -1,31 +1,138 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-
+import { register } from '../utils/api';
+import toast, { Toaster } from 'react-hot-toast';
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 const RegisterForm = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+      toast.error('Barcha maydonlar to\'ldirilishi shart!');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Parollar mos kelmaydi!');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error('Parol kamida 6 ta belgidan iborat bo\'lishi kerak!');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Email manzil noto\'g\'ri formatda!');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await register(formData.username, formData.password, formData.email);
+      
+      if (result) {
+        toast.success('Muvaffaqiyatli ro\'yxatdan o\'tdingiz! Email tasdiqlashni tekshiring.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      } else {
+        toast.error('Ro\'yxatdan o\'tishda xatolik yuz berdi!');
+      }
+    } catch (error) {
+      console.error('Register error:', error);
+      toast.error('Ro\'yxatdan o\'tish jarayonida xatolik yuz berdi!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <StyledWrapper>
-      <div className="form-container m-auto mt-10 mb-10">
-        <p className="title">Register</p>
-        <form className="form">
-          <div className="input-group">
-            <label htmlFor="username">Username</label>
-            <input type="text" name="username" id="username" placeholder="Enter your username" />
-          </div>
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <input type="email" name="email" id="email" placeholder="Enter your email" />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Enter your password" />
-          </div>
-          <div className="input-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" />
-          </div>
-          <button className="sign">Sign up</button>
-        </form>
+    <BackgroundBeamsWithCollision>
+    <div className="min-h-screen   flex items-center justify-center">
+      <Toaster position="top-right" />
+      <StyledWrapper>
+        <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5">
+          <p className="title">Register</p>
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="username">Username</label>
+              <input 
+                type="text" 
+                name="username" 
+                id="username" 
+                placeholder="Username kiriting..."
+                value={formData.username}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="email">Email</label>
+              <input 
+                type="email" 
+                name="email" 
+                id="email" 
+                placeholder="Email kiriting..."
+                value={formData.email}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="password">Password</label>
+              <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                placeholder="Parol kiriting..."
+                value={formData.password}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input 
+                type="password" 
+                name="confirmPassword" 
+                id="confirmPassword" 
+                placeholder="Parolni takrorlang..."
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
+            <button 
+              className="sign" 
+              type="submit" 
+              disabled={loading}
+            >
+              {loading ? 'Ro\'yxatdan o\'tkazilmoqda...' : 'Sign up'}
+            </button>
+          </form>
 
         <div className="social-message">
           <div className="line" />
@@ -59,6 +166,8 @@ const RegisterForm = () => {
         </p>
       </div>
     </StyledWrapper>
+    </div>
+    </BackgroundBeamsWithCollision>
   );
 };
 

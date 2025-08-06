@@ -5,15 +5,16 @@ import Sidebar from "./components/Sidebar";
 import GamePromoCard from "./components/GamePromoCard ";
 import Chart from "./components/Chart";
 import Footer from "./components/Footer";
-
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 export default function Home() {
   return (
+    
     <div className="bg-gray-900">
        
       <div className="display flex flex-col min-h-screen">
         <div className="container mx-auto px-4 py-16">
-          <Section />
-        </div>
+           <Section />
+         </div>
         <div>
         <DashboardSection />
 
@@ -25,5 +26,6 @@ export default function Home() {
       </div>
       
     </div>
+
   );
 }

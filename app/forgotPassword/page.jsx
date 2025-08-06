@@ -1,27 +1,95 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from 'next/navigation';
 import styled from "styled-components";
-
+import { resetPassword } from '../utils/api';
+import toast, { Toaster } from 'react-hot-toast';
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 const ForgotPassword = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast.error('Email manzilni kiriting!');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Email manzil noto\'g\'ri formatda!');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await resetPassword(email);
+      
+      if (result) {
+        toast.success('Parolni tiklash havolasi emailingizga yuborildi!');
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      } else {
+        toast.error('Email manzil topilmadi yoki xatolik yuz berdi!');
+      }
+    } catch (error) {
+      console.error('Reset password error:', error);
+      toast.error('Parolni tiklash jarayonida xatolik yuz berdi!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <StyledWrapper>
-      <div className="form-container m-auto mt-10 mb-10">
-        <p className="title">Forgot Password</p>
-        <form className="form">
-          <div className="input-group">
-            <label htmlFor="email">Enter your email</label>
-            <input type="email" name="email" id="email" placeholder="example@example.com" />
-          </div>
-          <button className="sign">Reset Password</button>
-        </form>
-        <p className="signup">
-          Remembered your password?{" "}
-          <a rel="noopener noreferrer" href="/login">
-            Sign in
-          </a>
-        </p>
-      </div>
-    </StyledWrapper>
+     <BackgroundBeamsWithCollision>
+          <div className="min-h-screen   to-gray-800 flex items-center justify-center">
+      <Toaster position="top-right" />
+      <StyledWrapper>
+        <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5">
+          <p className="title">Forgot Password</p>
+          <p className="subtitle">Parolni tiklash uchun email manzilni kiriting</p>
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="email">Enter your email</label>
+              <input 
+                type="email" 
+                name="email" 
+                id="email" 
+                placeholder="Email manzilni kiriting..."
+                value={email}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
+            <button 
+              className="sign" 
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Yuborilmoqda...' : 'Reset Password'}
+            </button>
+          </form>
+          <p className="signup">
+            Remembered your password?{" "}
+            <a rel="noopener noreferrer" href="/login">
+              Sign in
+            </a>
+          </p>
+        </div>
+      </StyledWrapper>
+    </div>
+    </BackgroundBeamsWithCollision>
+
   );
 };
 
@@ -40,6 +108,14 @@ const StyledWrapper = styled.div`
     font-size: 1.5rem;
     line-height: 2rem;
     font-weight: 700;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgba(156, 163, 175, 1);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .form {
@@ -72,6 +148,11 @@ const StyledWrapper = styled.div`
     border-color: rgba(167, 139, 250);
   }
 
+  .input-group input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   .sign {
     display: block;
     width: 100%;
@@ -83,6 +164,17 @@ const StyledWrapper = styled.div`
     border-radius: 0.375rem;
     font-weight: 600;
     margin-top: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sign:hover:not(:disabled) {
+    background-color: rgba(147, 119, 240, 1);
+  }
+
+  .sign:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   .signup {
