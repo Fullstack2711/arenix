@@ -72,7 +72,7 @@ export async function resetPassword(email) {
 // 🟢 PAROLNI TASDIQLASH – bosqichi 2
 export async function resetConfirm(email, token, newPassword) {
   try {
-    const response = await fetch(`${API_URL}/users/reset/confirm`, {
+    const response = await fetch(`${API_URL}/users/reset-confirm/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, token, new_password: newPassword }),

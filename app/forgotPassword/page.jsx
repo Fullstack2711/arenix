@@ -55,7 +55,7 @@ const ForgotPassword = () => {
           <div className="min-h-screen   to-gray-800 flex items-center justify-center">
       <Toaster position="top-right" />
       <StyledWrapper>
-        <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5">
+        <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5 ">
           <p className="title">Forgot Password</p>
           <p className="subtitle">Parolni tiklash uchun email manzilni kiriting</p>
           <form className="form" onSubmit={handleSubmit}>
