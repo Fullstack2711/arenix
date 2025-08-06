@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-import { login } from '../utils/api';
+import { login, verify } from '../utils/api';
 import { setTokens } from '../../lib/auth';
 import toast, { Toaster } from 'react-hot-toast';
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
@@ -12,43 +12,92 @@ const Form = () => {
     email: '',
     password: ''
   });
+  const [otpData, setOtpData] = useState({
+    email: '',
+    otp: ''
+  });
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1); // 1: login form, 2: OTP form
 
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    if (step === 1) {
+      setFormData(prev => ({
+        ...prev,
+        [e.target.name]: e.target.value
+      }));
+    } else {
+      setOtpData(prev => ({
+        ...prev,
+        [e.target.name]: e.target.value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      toast.error('Email va parol kiritilishi shart!');
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      console.log('Login attempt with:', { email: formData.email, password: '***' });
-      const result = await login(formData.email, formData.password);
-      
-      if (result && result.access && result.refresh) {
-        setTokens(result.access, result.refresh);
-        toast.success('Muvaffaqiyatli login qildingiz!');
-        setTimeout(() => {
-          router.push('/home');
-        }, 1000);
-      } else {
-        toast.error('Login yoki parol noto\'g\'ri!');
+    if (step === 1) {
+      // Birinchi bosqich: Email va parol yuborish
+      if (!formData.email || !formData.password) {
+        toast.error('Email va parol kiritilishi shart!');
+        return;
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Login jarayonida xatolik yuz berdi!');
-    } finally {
-      setLoading(false);
+
+      setLoading(true);
+
+      try {
+        console.log('Login attempt with:', { email: formData.email, password: '***' });
+        const result = await login(formData.email, formData.password);
+        
+        if (result && result.message && result.message.includes('OTP')) {
+          // OTP yuborildi
+          setOtpData(prev => ({ ...prev, email: formData.email }));
+          setStep(2);
+          toast.success('OTP kodi emailingizga yuborildi!');
+        } else if (result && result.access && result.refresh) {
+          // To'g'ridan-to'g'ri tokenlar keldi
+          setTokens(result.access, result.refresh);
+          toast.success('Muvaffaqiyatli login qildingiz!');
+          setTimeout(() => {
+            router.push('/home');
+          }, 1000);
+        } else {
+          toast.error('Email yoki parol noto\'g\'ri!');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        toast.error('Login jarayonida xatolik yuz berdi!');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Ikkinchi bosqich: OTP tasdiqlash
+      if (!otpData.otp) {
+        toast.error('OTP kodi kiritilishi shart!');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        console.log('OTP verification with:', { email: otpData.email, otp: otpData.otp });
+        const result = await verify(otpData.email, otpData.otp);
+        
+        if (result && result.access && result.refresh) {
+          setTokens(result.access, result.refresh);
+          toast.success('Muvaffaqiyatli tasdiqlandi!');
+          setTimeout(() => {
+            router.push('/home');
+          }, 1000);
+        } else {
+          toast.error('OTP kodi noto\'g\'ri yoki eskirgan!');
+        }
+      } catch (error) {
+        console.error('OTP verification error:', error);
+        toast.error('OTP tasdiqlashda xatolik yuz berdi!');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -58,43 +107,87 @@ const Form = () => {
       <Toaster position="top-right" />
       <StyledWrapper>
         <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5">
-          <p className="title">Login</p>
+          <p className="title">{step === 1 ? 'Login' : 'OTP Tasdiqlash'}</p>
           <form className="form" onSubmit={handleSubmit}>
-            <div className="input-group">
-              <label htmlFor="email">Email</label>
-              <input 
-                type="text" 
-                name="email" 
-                id="email" 
-                placeholder="Email kiriting..."
-                value={formData.email}
-                onChange={handleChange}
-                disabled={loading}
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="password">Password</label>
-              <input 
-                type="password" 
-                name="password" 
-                id="password" 
-                placeholder="Parol kiriting..."
-                value={formData.password}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <div className="forgot">
-                <a rel="noopener noreferrer" href="/forgotPassword">Forgot Password ?</a>
-              </div>
-            </div>
-            <button 
-              className="sign" 
-              type="submit" 
-              disabled={loading}
-            >
-              {loading ? 'Login qilinmoqda...' : 'Sign in'}
-            </button>
+            {step === 1 ? (
+              // Birinchi bosqich: Email va Parol
+              <>
+                <div className="input-group">
+                  <label htmlFor="email">Email</label>
+                  <input 
+                    type="text" 
+                    name="email" 
+                    id="email" 
+                    placeholder="Email kiriting..."
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="input-group">
+                  <label htmlFor="password">Password</label>
+                  <input 
+                    type="password" 
+                    name="password" 
+                    id="password" 
+                    placeholder="Parol kiriting..."
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                  <div className="forgot">
+                    <a rel="noopener noreferrer" href="/forgotPassword">Forgot Password ?</a>
+                  </div>
+                </div>
+                <button 
+                  className="sign" 
+                  type="submit" 
+                  disabled={loading}
+                >
+                  {loading ? 'Tekshirilmoqda...' : 'Tekshirish'}
+                </button>
+              </>
+            ) : (
+              // Ikkinchi bosqich: OTP
+              <>
+                <div className="input-group">
+                  <label htmlFor="otp">OTP Kodi</label>
+                  <input 
+                    type="text" 
+                    name="otp" 
+                    id="otp" 
+                    placeholder="6 raqamli kodni kiriting..."
+                    value={otpData.otp}
+                    onChange={handleChange}
+                    disabled={loading}
+                    maxLength="6"
+                  />
+                  <div className="forgot">
+                    <p className="text-sm text-gray-400 mt-2">
+                      {otpData.email} manziliga OTP kodi yuborildi
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  className="sign" 
+                  type="submit" 
+                  disabled={loading}
+                >
+                  {loading ? 'Tasdiqlanmoqda...' : 'Tasdiqlash'}
+                </button>
+                <button 
+                  className="back-btn" 
+                  type="button" 
+                  onClick={() => setStep(1)}
+                  disabled={loading}
+                >
+                  Orqaga qaytish
+                </button>
+              </>
+            )}
           </form>
+        {step === 1 && (
+          <>
         <div className="social-message">
           <div className="line" />
           <p className="message">Login with social accounts</p>
@@ -121,6 +214,8 @@ const Form = () => {
         <p className="signup">Don't have an account?
           <a rel="noopener noreferrer" href="/register">Sign up</a>
         </p>
+          </>
+        )}
       </div>
     </StyledWrapper>
     </div>
@@ -203,6 +298,25 @@ const StyledWrapper = styled.div`
     border: none;
     border-radius: 0.375rem;
     font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .back-btn {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    padding: 0.75rem;
+    text-align: center;
+    color: rgba(156, 163, 175, 1);
+    border: 1px solid rgba(55, 65, 81, 1);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .back-btn:hover {
+    background-color: rgba(55, 65, 81, 1);
+    color: rgba(243, 244, 246, 1);
   }
 
   .social-message {

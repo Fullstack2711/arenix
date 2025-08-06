@@ -1,11 +1,14 @@
-const API_URL = 'http://198.211.96.176';
-
+ const API_URL = process.env.NEXT_PUBLIC_BASE_URL  || 'https://3eb989695206.ngrok-free.app'; 
+ 
 // 🟢 LOGIN – token olish
 export async function login(email, password) {
   try {
     const response = await fetch(`${API_URL}/users/login/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       body: JSON.stringify({ email, password }),
     });
 
