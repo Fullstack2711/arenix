@@ -6,6 +6,7 @@ import { login, verify } from '../utils/api';
 import { setTokens } from '../../lib/auth';
 import toast, { Toaster } from 'react-hot-toast';
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
+import { SimpleOTPInput } from '../components/SimpleOTPInput';
 const Form = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -25,12 +26,15 @@ const Form = () => {
         ...prev,
         [e.target.name]: e.target.value
       }));
-    } else {
-      setOtpData(prev => ({
-        ...prev,
-        [e.target.name]: e.target.value
-      }));
     }
+  };
+
+  const handleOtpChange = (value) => {
+    console.log('OTP value changed:', value, 'Length:', value?.length);
+    setOtpData(prev => ({
+      ...prev,
+      otp: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -49,11 +53,13 @@ const Form = () => {
         console.log('Login attempt with:', { email: formData.email, password: '***' });
         const result = await login(formData.email, formData.password);
         
-        if (result && result.message && result.message.includes('OTP')) {
+        console.log('Login result received:', result);
+        
+        if (result && result.message && (result.message.includes('Verification') || result.message.includes('code'))) {
           // OTP yuborildi
           setOtpData(prev => ({ ...prev, email: formData.email }));
           setStep(2);
-          toast.success('OTP kodi emailingizga yuborildi!');
+          toast.success('Tasdiqlash kodi emailingizga yuborildi!');
         } else if (result && result.access && result.refresh) {
           // To'g'ridan-to'g'ri tokenlar keldi
           setTokens(result.access, result.refresh);
@@ -61,6 +67,8 @@ const Form = () => {
           setTimeout(() => {
             router.push('/home');
           }, 1000);
+        } else if (result === null) {
+          toast.error('Server bilan bog\'lanishda xatolik!');
         } else {
           toast.error('Email yoki parol noto\'g\'ri!');
         }
@@ -72,8 +80,19 @@ const Form = () => {
       }
     } else {
       // Ikkinchi bosqich: OTP tasdiqlash
-      if (!otpData.otp) {
-        toast.error('OTP kodi kiritilishi shart!');
+      console.log('=== OTP VALIDATION DEBUG ===');
+      console.log('otpData.otp:', otpData.otp);
+      console.log('otpData.otp type:', typeof otpData.otp);
+      console.log('otpData.otp length:', otpData.otp?.length);
+      console.log('String(otpData.otp):', String(otpData.otp));
+      console.log('String(otpData.otp).length:', String(otpData.otp).length);
+      console.log('=== END DEBUG ===');
+      
+      const otpString = String(otpData.otp || '');
+      
+      if (!otpData.otp || otpString.length !== 4) {
+        console.log('Validation failed - OTP length:', otpString.length);
+        toast.error('4 raqamli OTP kodi kiritilishi shart!');
         return;
       }
 
@@ -83,18 +102,26 @@ const Form = () => {
         console.log('OTP verification with:', { email: otpData.email, otp: otpData.otp });
         const result = await verify(otpData.email, otpData.otp);
         
+        console.log('OTP verification result:', result);
+        
         if (result && result.access && result.refresh) {
           setTokens(result.access, result.refresh);
           toast.success('Muvaffaqiyatli tasdiqlandi!');
           setTimeout(() => {
             router.push('/home');
           }, 1000);
+        } else if (result === null) {
+          toast.error('Server bilan bog\'lanishda xatolik!');
         } else {
           toast.error('OTP kodi noto\'g\'ri yoki eskirgan!');
         }
       } catch (error) {
         console.error('OTP verification error:', error);
-        toast.error('OTP tasdiqlashda xatolik yuz berdi!');
+        if (error.message.includes('Invalid or expired')) {
+          toast.error('OTP kodi noto\'g\'ri yoki eskirgan!');
+        } else {
+          toast.error('OTP tasdiqlashda xatolik yuz berdi!');
+        }
       } finally {
         setLoading(false);
       }
@@ -106,7 +133,7 @@ const Form = () => {
     <div className="flex items-center justify-center   p-6  ">
       <Toaster position="top-right" />
       <StyledWrapper>
-        <div className="form-container m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5">
+        <div className={`form-container ${step === 2 ? 'otp-form' : ''} m-auto mt-10 mb-10 border-1 border-gray-700 rounded-5`}>
           <p className="title">{step === 1 ? 'Login' : 'OTP Tasdiqlash'}</p>
           <form className="form" onSubmit={handleSubmit}>
             {step === 1 ? (
@@ -150,21 +177,15 @@ const Form = () => {
             ) : (
               // Ikkinchi bosqich: OTP
               <>
-                <div className="input-group">
-                  <label htmlFor="otp">OTP Kodi</label>
-                  <input 
-                    type="text" 
-                    name="otp" 
-                    id="otp" 
-                    placeholder="6 raqamli kodni kiriting..."
+                <div className="otp-container">
+                  <SimpleOTPInput 
                     value={otpData.otp}
-                    onChange={handleChange}
+                    onChange={handleOtpChange}
                     disabled={loading}
-                    maxLength="6"
                   />
-                  <div className="forgot">
-                    <p className="text-sm text-gray-400 mt-2">
-                      {otpData.email} manziliga OTP kodi yuborildi
+                  <div className="email-info">
+                    <p className="text-sm text-gray-400 mt-4 text-center">
+                      {otpData.email} manziliga tasdiqlash kodi yuborildi
                     </p>
                   </div>
                 </div>
@@ -173,12 +194,15 @@ const Form = () => {
                   type="submit" 
                   disabled={loading}
                 >
-                  {loading ? 'Tasdiqlanmoqda...' : 'Tasdiqlash'}
+                  {loading ? 'Tasdiqlanmoqda...' : `Tasdiqlash ${otpData.otp ? `(${String(otpData.otp).length}/4)` : '(0/4)'}`}
                 </button>
                 <button 
                   className="back-btn" 
                   type="button" 
-                  onClick={() => setStep(1)}
+                  onClick={() => {
+                    setStep(1);
+                    setOtpData({ email: '', otp: '' });
+                  }}
                   disabled={loading}
                 >
                   Orqaga qaytish
@@ -230,6 +254,11 @@ const StyledWrapper = styled.div`
     background-color: rgba(17, 24, 39, 1);
     padding: 2rem;
     color: rgba(243, 244, 246, 1);
+    transition: width 0.3s ease;
+  }
+
+  .form-container.otp-form {
+    width: 400px;
   }
 
   .title {
@@ -299,6 +328,13 @@ const StyledWrapper = styled.div`
     border-radius: 0.375rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .sign:disabled {
+    background-color: rgba(107, 114, 128, 1);
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 
   .back-btn {
@@ -317,6 +353,20 @@ const StyledWrapper = styled.div`
   .back-btn:hover {
     background-color: rgba(55, 65, 81, 1);
     color: rgba(243, 244, 246, 1);
+  }
+
+  .otp-container {
+    margin: 1rem 0;
+  }
+
+  .email-info {
+    text-align: center;
+  }
+
+  .email-info p {
+    color: rgba(156, 163, 175, 1);
+    font-size: 0.875rem;
+    margin-top: 1rem;
   }
 
   .social-message {
