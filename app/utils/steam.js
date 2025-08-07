@@ -1,15 +1,40 @@
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+import { getAccessToken } from '../../lib/auth';
+
 
 // Steam login  
 export async function steamLogin(loginData) {
     try {
+        const accessToken = getAccessToken();
+        const headers = { 
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
+        };
+        
+        // Token mavjud bo'lsa, Authorization header qo'shish
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
         const response = await fetch(`${API_URL}/api/steam/login/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(loginData),
+            method: 'GET',
+            headers,
+            mode: 'cors',
         });
 
-        if (!response.ok) throw new Error('Steam login failed');
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Steam login failed with response:', errorText);
+            throw new Error(`Steam login failed: ${response.status} ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const responseText = await response.text();
+            console.error('Expected JSON but got:', contentType, 'Response:', responseText);
+            throw new Error('Server returned non-JSON response');
+        }
+        
         const data = await response.json();
         return data;
     } catch (error) {
@@ -18,55 +43,62 @@ export async function steamLogin(loginData) {
     }
 }
 
-// Steam callback  
-export async function steamCallback(data) {
+// Steam callback - backend ga Steam ma'lumotlarini yuborish
+export async function steamCallback(steamData) {
     try {
-        const response = await fetch(`${API_URL}/api/steam/callback/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+        const accessToken = getAccessToken();
+        const headers = { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
+        };
+        
+        // Token mavjud bo'lsa, Authorization header qo'shish
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        console.log('Steam callback with data:', steamData);
+        console.log('API URL:', API_URL);
+
+        // Steam callback parametrlarini query string sifatida yuborish
+        const queryParams = new URLSearchParams(steamData).toString();
+        const response = await fetch(`${API_URL}/api/steam/callback/?${queryParams}`, {
+            method: 'GET',
+            headers,
+            mode: 'cors',
         });
 
+        console.log('Steam callback response status:', response.status);
+
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Steam callback failed with response:', errorText);
             throw new Error(`Steam callback failed: ${response.status} ${response.statusText}`);
         }
 
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const responseText = await response.text();
+            console.error('Expected JSON but got:', contentType, 'Response:', responseText);
+            throw new Error('Server returned non-JSON response');
+        }
+
         const responseData = await response.json();
+        console.log('Steam callback response data:', responseData);
         return responseData;
     } catch (error) {
         console.error("Steam callback error:", error);
-        return null;
+        throw error;
     }
 }
 
- //api/steam/login/ dan Steam URL olish
+// Steam login URL olish va redirect qilish
 export async function initiateSteamLogin() {
-    try {
-        const response = await fetch(`${API_URL}/api/steam/login/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                redirect_url: `${window.location.origin}/steam-callback`
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Steam login initiation failed: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        
-        // Backend dan Steam login URL qaytganda, foydalanuvchini yo'naltirish
-        if (data.steam_login_url || data.url || data.login_url) {
-            const steamUrl = data.steam_login_url || data.url || data.login_url;
-            window.location.href = steamUrl;
-        } else {
-            throw new Error('Steam login URL not received from backend');
-        }
-        
-        return data;
-    } catch (error) {
-        console.error("Steam login initiation error:", error);
+    try{
+window.location.href = `${API_URL}/api/steam/login/?access_token=${getAccessToken}`;        
+    }catch (error) {
+        console.error("Error initiating Steam login:", error);
         throw error;
     }
 }
