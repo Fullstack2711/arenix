@@ -96,9 +96,11 @@ export async function steamCallback(steamData) {
 // Steam login URL olish va redirect qilish
 export async function initiateSteamLogin() {
     try{
-window.location.href = `${API_URL}/api/steam/login/?access_token=${getAccessToken}`;        
+        window.location.href = `${API_URL}/api/steam/login/?access_token=${getAccessToken()}`;        
     }catch (error) {
         console.error("Error initiating Steam login:", error);
         throw error;
     }
 }
+
+ 

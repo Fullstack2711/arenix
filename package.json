@@ -12,6 +12,7 @@
     "@react-three/fiber": "9.0.0-alpha.8",
     "@tabler/icons-react": "^3.34.1",
     "@tailwindcss/cli": "^4.1.11",
+    "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.1",
