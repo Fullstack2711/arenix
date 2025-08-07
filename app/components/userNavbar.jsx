@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Bell, User, Search, Settings, LogOut, ChevronDown } from 'lucide-react'
+import { Bell, User, Search, LogOut, ChevronDown, Bitcoin } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { logout } from '../utils/api'
 import { clearTokens, getRefreshToken } from '../../lib/auth'
 import toast from 'react-hot-toast'
+import Image from 'next/image'
 
 function userNavbar() {
   const router = useRouter()
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
   const dropdownRef = useRef(null)
 
   // Close dropdown when clicking outside
@@ -18,9 +20,18 @@ function userNavbar() {
       }
     }
 
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        setIsWithdrawModalOpen(false)
+        setIsProfileDropdownOpen(false)
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscapeKey)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
     }
   }, [])
 
@@ -79,8 +90,18 @@ function userNavbar() {
             </span>
           </button>
           
-          <button className="p-2 rounded-lg hover:bg-gray-700 transition-colors">
-            <Settings size={22} className="text-gray-300" />
+          <button 
+            onClick={() => setIsWithdrawModalOpen(true)}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            <Image 
+              src="/logo/bitcoin.png" 
+              alt="Bitcoin" 
+              width={20} 
+              height={20} 
+              className="w-5 h-5"
+            />
+            <span className="text-sm font-medium text-gray-300 hidden md:block">Pul yechish</span>
           </button>
 
           <div className="relative" ref={dropdownRef}>
@@ -136,6 +157,96 @@ function userNavbar() {
           </div>
         </div>
       </div>
+
+      {/* Withdraw Modal */}
+      {isWithdrawModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setIsWithdrawModalOpen(false)}
+        >
+          <div 
+            className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 border border-gray-600"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-white">Pul yechish</h3>
+              <button 
+                onClick={() => setIsWithdrawModalOpen(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <button className="w-full flex items-center space-x-4 p-4 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
+                <Image 
+                  src="/logo/bitcoin.png" 
+                  alt="Bitcoin" 
+                  width={32} 
+                  height={32} 
+                  className="w-8 h-8"
+                />
+                <div className="text-left">
+                  <p className="text-white font-medium">Bitcoin</p>
+                  <p className="text-gray-400 text-sm">BTC orqali yechish</p>
+                </div>
+              </button>
+
+              <button className="w-full flex items-center space-x-4 p-4 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
+                <Image 
+                  src="/logo/toncoin.png" 
+                  alt="Toncoin" 
+                  width={32} 
+                  height={32} 
+                  className="w-8 h-8"
+                />
+                <div className="text-left">
+                  <p className="text-white font-medium">Toncoin</p>
+                  <p className="text-gray-400 text-sm">TON orqali yechish</p>
+                </div>
+              </button>
+
+              <button className="w-full flex items-center space-x-4 p-4 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
+                <Image 
+                  src="/logo/uzcard.png" 
+                  alt="UzCard" 
+                  width={32} 
+                  height={32} 
+                  className="w-8 h-8"
+                />
+                <div className="text-left">
+                  <p className="text-white font-medium">UzCard</p>
+                  <p className="text-gray-400 text-sm">UzCard orqali yechish</p>
+                </div>
+              </button>
+
+              <button className="w-full flex items-center space-x-4 p-4 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
+                <Image 
+                  src="/logo/humo.png" 
+                  alt="Humo" 
+                  width={32} 
+                  height={32} 
+                  className="w-8 h-8"
+                />
+                <div className="text-left">
+                  <p className="text-white font-medium">Humo</p>
+                  <p className="text-gray-400 text-sm">Humo orqali yechish</p>
+                </div>
+              </button>
+            </div>
+
+            <button 
+              onClick={() => setIsWithdrawModalOpen(false)}
+              className="w-full mt-6 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+            >
+              Yopish
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
