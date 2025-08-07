@@ -5,8 +5,7 @@ import Sidebar from "./components/Sidebar";
 import GamePromoCard from "./components/GamePromoCard ";
 import Chart from "./components/Chart";
 import Footer from "./components/Footer";
-import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
-export default function Home() {
+ export default function Home() {
   return (
     
     <div className="bg-gray-900">

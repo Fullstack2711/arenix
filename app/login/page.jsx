@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { login, verify } from '../utils/api';
 import { setTokens } from '../../lib/auth';
 import toast, { Toaster } from 'react-hot-toast';
-import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
-import { SimpleOTPInput } from '../components/SimpleOTPInput';
+ import { SimpleOTPInput } from '../components/SimpleOTPInput';
+import { BackgroundBeamsWithCollision } from '../../components/ui/background-beams-with-collision';
 const Form = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -65,7 +65,7 @@ const Form = () => {
           setTokens(result.access, result.refresh);
           toast.success('Muvaffaqiyatli login qildingiz!');
           setTimeout(() => {
-            router.push('/home');
+            router.push('/user-dashboard');
           }, 1000);
         } else if (result === null) {
           toast.error('Server bilan bog\'lanishda xatolik!');
@@ -108,7 +108,7 @@ const Form = () => {
           setTokens(result.access, result.refresh);
           toast.success('Muvaffaqiyatli tasdiqlandi!');
           setTimeout(() => {
-            router.push('/home');
+            router.push('/user-dashboard');
           }, 1000);
         } else if (result === null) {
           toast.error('Server bilan bog\'lanishda xatolik!');
