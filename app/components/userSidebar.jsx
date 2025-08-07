@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { 
   Trophy, 
   Gamepad2, 
@@ -13,8 +14,37 @@ import {
   Users,
   History
 } from 'lucide-react'
+import { logout } from '../utils/api'
+import { clearTokens, getRefreshToken } from '../../lib/auth'
+import toast from 'react-hot-toast'
 
 function userSidebar({ activeTab, setActiveTab }) {
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      const refreshToken = getRefreshToken()
+      
+      // Call logout API
+      await logout(refreshToken)
+      
+      // Clear local tokens
+      clearTokens()
+      
+      // Show success message
+      toast.success('Muvaffaqiyatli chiqildi!')
+      
+      // Redirect to login page
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Even if API fails, clear local tokens and redirect
+      clearTokens()
+      toast.success('Chiqildi!')
+      router.push('/login')
+    }
+  }
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'tournaments', label: 'Turnirlar', icon: Trophy },
@@ -62,7 +92,10 @@ function userSidebar({ activeTab, setActiveTab }) {
       
       {/* Fixed bottom section */}
       <div className="p-6 pt-0 border-t border-gray-700">
-        <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-900/20 transition-all duration-200">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-all duration-200"
+        >
           <LogOut size={20} />
           <span className="font-medium">Chiqish</span>
         </button>

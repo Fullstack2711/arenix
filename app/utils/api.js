@@ -164,3 +164,28 @@ export async function refreshAccessToken(refreshToken) {
   }
 }
 
+// 🟢 LOGOUT – tokenlarni bekor qilish
+export async function logout(refreshToken) {
+  try {
+    const response = await fetch(`${API_URL}/users/logout/`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+      console.warn('Logout request failed, but continuing with local cleanup');
+    }
+    
+    const data = await response.json().catch(() => ({}));
+    return data;
+  } catch (e) {
+    console.error("Logout error:", e);
+    // Even if logout fails on server, we should clear local tokens
+    return { success: true };
+  }
+}
+

@@ -2,8 +2,8 @@
 
 import { useMotionValue, motion, useMotionTemplate } from "motion/react";
 import React, { useState } from "react";
-import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
-import { cn } from "@/lib/utils";
+import { CanvasRevealEffect } from "../ui/canvas-reveal-effect";
+import { cn } from "../../lib/utils";
 
 export const CardSpotlight = ({
   children,

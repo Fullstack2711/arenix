@@ -1,4 +1,4 @@
-import { CardSpotlight } from "@/components/ui/card-spotlight";
+import { CardSpotlight } from "../../components/ui/card-spotlight";
 import Image from "next/image";
 
 export function CardSpotlightDemo({ img, name }) {
