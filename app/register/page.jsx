@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { register } from '../utils/api';
 import toast, { Toaster } from 'react-hot-toast';
 import { BackgroundBeamsWithCollision } from "../../components/ui/background-beams-with-collision";
+
 const RegisterForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -54,10 +55,19 @@ const RegisterForm = () => {
       const result = await register(formData.username, formData.password, formData.email);
       
       if (result) {
-        toast.success('Muvaffaqiyatli ro\'yxatdan o\'tdingiz! Email tasdiqlashni tekshiring.');
-        setTimeout(() => {
-          router.push('/login');
-        }, 2000);
+        // Agar tokenlar qaytarilsa (avtomatik login), user-dashboard ga yo'naltirish
+        if (result.access && result.refresh) {
+          toast.success('Muvaffaqiyatli ro\'yxatdan o\'tdingiz va tizimga kirdingiz!');
+          setTimeout(() => {
+            router.push('/user-dashboard');
+          }, 2000);
+        } else {
+          // Agar faqat muvaffaqiyat xabari qaytarilsa, login sahifasiga yo'naltirish
+          toast.success('Muvaffaqiyatli ro\'yxatdan o\'tdingiz! Email tasdiqlashni tekshiring.');
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+        }
       } else {
         toast.error('Ro\'yxatdan o\'tishda xatolik yuz berdi!');
       }

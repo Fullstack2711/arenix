@@ -1,4 +1,5 @@
  const API_URL = process.env.NEXT_PUBLIC_BASE_URL  || 'https://3eb989695206.ngrok-free.app'; 
+import { setTokens } from '../../lib/auth'; 
  
 // 🟢 LOGIN – token olish
 export async function login(email, password) {
@@ -36,14 +37,41 @@ export async function login(email, password) {
 // 🟢 REGISTER – foydalanuvchi yaratish
 export async function register(username, password, email) {
   try {
+    console.log('Making register request to:', `${API_URL}/users/register/`);
+    console.log('Request body:', { username, email, password: '***' });
+    
     const response = await fetch(`${API_URL}/users/register/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       body: JSON.stringify({ username, password, email }),
     });
 
-    if (!response.ok) throw new Error('Registration failed');
+    console.log('Register response status:', response.status);
+    console.log('Register response ok:', response.ok);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Register failed with error text:', errorText);
+      throw new Error(`Registration failed with status ${response.status}`);
+    }
+    
     const data = await response.json();
+    console.log('Register response data:', data);
+    
+    // Agar registration muvaffaqiyatli bo'lsa va tokenlar qaytarilsa, ularni saqlash
+    if (data && data.access && data.refresh) {
+      console.log('✅ Tokens received from registration:');
+      console.log('Access token:', data.access);
+      console.log('Refresh token:', data.refresh);
+      setTokens(data.access, data.refresh);
+      console.log('✅ Tokens saved to localStorage after registration');
+    } else {
+      console.log('ℹ️ No tokens received from registration. Response data:', data);
+    }
+    
     return data;
   } catch (e) {
     console.error("Register error:", e);
