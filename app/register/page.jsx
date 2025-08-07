@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { register } from '../utils/api';
 import toast, { Toaster } from 'react-hot-toast';
-import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
+import { BackgroundBeamsWithCollision } from "../../components/ui/background-beams-with-collision";
 const RegisterForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({

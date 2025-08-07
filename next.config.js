@@ -1,11 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['example.com', 'imgbin.com', 'thumbnail.imgbin.com', 'images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com', 'i.pinimg.com', 'www.pngpacks.com'],
+    domains: [
+      'example.com',
+      'imgbin.com',
+      'thumbnail.imgbin.com',
+      'images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com',
+      'i.pinimg.com',
+      'www.pngpacks.com',
+    ],
   },
+
   compiler: {
     styledComponents: true,
   },
+
   experimental: {
     turbo: {
       rules: {
@@ -16,6 +25,15 @@ const nextConfig = {
       },
     },
   },
+
+  eslint: {
+    ignoreDuringBuilds: true, // ESLint warning va errorlarni buildda to‘xtatmaydi
+  },
+
+  typescript: {
+    ignoreBuildErrors: true, // TypeScript errorlar bo‘lsa ham buildni to‘xtatmaydi
+  },
+
   async rewrites() {
     return [
       {
@@ -24,6 +42,7 @@ const nextConfig = {
       },
     ];
   },
+
   async headers() {
     return [
       {

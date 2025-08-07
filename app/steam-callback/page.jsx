@@ -1,11 +1,11 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { steamCallback } from '../utils/steam'
 import { setTokens } from '../../lib/auth'
 import toast, { Toaster } from 'react-hot-toast'
 
-export default function SteamCallback() {
+function SteamCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -57,5 +57,21 @@ export default function SteamCallback() {
         <p className="text-gray-400">Iltimos kutib turing...</p>
       </div>
     </div>
+  )
+}
+
+export default function SteamCallback() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-white mb-2">Yuklanmoqda...</h2>
+          <p className="text-gray-400">Iltimos kutib turing...</p>
+        </div>
+      </div>
+    }>
+      <SteamCallbackContent />
+    </Suspense>
   )
 }

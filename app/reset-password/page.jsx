@@ -1,13 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import styled from "styled-components";
 import { resetConfirm } from '../utils/api';
 import { setTokens } from '../../lib/auth';
 import toast, { Toaster } from 'react-hot-toast';
-import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
+import { BackgroundBeamsWithCollision } from "../../components/ui/background-beams-with-collision";
 
-const ResetPassword = () => {
+const ResetPasswordContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -163,6 +163,24 @@ const ResetPassword = () => {
         </StyledWrapper>
       </div>
     </BackgroundBeamsWithCollision>
+  );
+};
+
+const ResetPassword = () => {
+  return (
+    <Suspense fallback={
+      <BackgroundBeamsWithCollision>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <h2 className="text-xl font-semibold text-white mb-2">Yuklanmoqda...</h2>
+            <p className="text-gray-400">Iltimos kutib turing...</p>
+          </div>
+        </div>
+      </BackgroundBeamsWithCollision>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 };
 
