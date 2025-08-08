@@ -2,8 +2,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAccessToken } from '../../lib/auth';
-import { Users, Mail, Hash, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Users, Mail, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import UserSidebar from '../components/userSidebar';
 
@@ -19,15 +18,10 @@ function Page() {
     []
   );
 
-  const getUser = useCallback(async () => {
+  const getUser = useCallback(async (access_token) => {
     setLoading(true);
     setError(null);
     try {
-      const access_token = getAccessToken();
-      if (!access_token) {
-        throw new Error('No access token found');
-      }
-
       const response = await axios.get(`${API_URL}/users/`, {
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +30,6 @@ function Page() {
         },
       });
 
-      console.log('User data:', response.data);
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -47,8 +40,16 @@ function Page() {
   }, [API_URL]);
 
   useEffect(() => {
-    getUser();
-  }, []); // Empty dependency array
+    // faqat browserda ishlaydi
+    if (typeof window !== 'undefined') {
+      const access_token = localStorage.getItem('access_token');
+      if (access_token) {
+        getUser(access_token);
+      } else {
+        setError('No access token found');
+      }
+    }
+  }, [getUser]);
 
   const handleImageError = (userId) => {
     setImageErrors((prev) => ({ ...prev, [userId]: true }));
@@ -61,24 +62,23 @@ function Page() {
         <UserSidebar activeTab="friend" />
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col ml-64 overflow-y-auto">
         {/* Header */}
         <div className="bg-gray-900 shadow-sm border-b border-gray-800">
-          <div className="fixed  max-w-6xl mx-auto px-8 py-6 ">
-            <div className=" flex items-center space-x-3">
+          <div className="fixed max-w-6xl mx-auto px-8 py-6 ">
+            <div className="flex items-center space-x-3">
               <Users className="w-5 h-5 text-gray-200" />
               <div>
-                <h1 className=" text-lg font-semibold text-white">Team Members</h1>
+                <h1 className="text-lg font-semibold text-white">Team Members</h1>
                 <p className="text-xs text-gray-400">{users.length} members</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Content */}
         <div className="flex-1 max-w-8xl mx-auto px-8 py-8">
-          {/* Loading State */}
           {loading && (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-6 h-6 text-gray-500 animate-spin" />
@@ -86,7 +86,6 @@ function Page() {
             </div>
           )}
 
-          {/* Error State */}
           {error && (
             <div className="bg-red-50 rounded-md p-3">
               <div className="flex items-center space-x-2">
@@ -96,7 +95,6 @@ function Page() {
             </div>
           )}
 
-          {/* Members List */}
           {!loading && !error && users.length > 0 && (
             <div className="space-y-6 mt-16">
               {users.map((user) => (
@@ -111,7 +109,6 @@ function Page() {
                   aria-label={`View profile of ${user.username}`}
                 >
                   <div className="flex items-center space-x-8">
-                    {/* Profile Image or Initial */}
                     <div className="flex-shrink-0 relative">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-white">
                         {imageErrors[user.id] || !user.profile_image ? (
@@ -132,7 +129,6 @@ function Page() {
                       <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
 
-                    {/* User Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-medium text-white truncate">
@@ -145,18 +141,14 @@ function Page() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3 text-xs text-gray-500">
-                        {user.email && (
-                          <div className="flex items-center space-x-1 truncate max-w-40">
-                            <Mail className="w-3 h-3" />
-                            <span>{user.email}</span>
-                          </div>
-                        )}
-                        
-                      </div>
+                      {user.email && (
+                        <div className="flex items-center space-x-1 truncate max-w-40 text-xs text-gray-500">
+                          <Mail className="w-3 h-3" />
+                          <span>{user.email}</span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Action */}
                     <ChevronRight className="w-4 h-4 text-white flex-shrink-0" />
                   </div>
                 </div>
@@ -164,7 +156,6 @@ function Page() {
             </div>
           )}
 
-          {/* Empty State */}
           {!loading && !error && users.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-8 h-8 text-gray-400 mx-auto mb-2" />
