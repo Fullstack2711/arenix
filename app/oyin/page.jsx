@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { CardSpotlightDemo } from '../components/CardApple';
+import UserSidebar from '../components/userSidebar';
 
 function Page() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,9 +35,16 @@ function Page() {
   });
 
   return (
-    <div className='px-2 sm:px-4 lg:px-6 py-4 m-auto bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen pt-16'>
-      {/* Title */}
-      <div className="max-w-4xl mx-auto mb-6 sm:mb-8 lg:mb-12 text-center">
+    <div className="flex h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+      {/* Sidebar */}
+      <div className="w-64 flex-shrink-0">
+        <UserSidebar activeTab="games" />
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto px-2 sm:px-4 lg:px-6 py-4 pt-8">
+        {/* Title */}
+        <div className="max-w-4xl mx-auto mb-6 sm:mb-8 lg:mb-12 text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-3 sm:mb-4 tracking-tight">
           Turnirlar
         </h1>
@@ -112,7 +120,9 @@ function Page() {
           </div>
         )}
       </div>
-    </div>
+        </div>
+      </div> 
+    
   );
 }
 

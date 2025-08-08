@@ -1,5 +1,6 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { 
   Trophy, 
   Gamepad2, 
@@ -12,24 +13,70 @@ import {
   ChevronRight,
   Calendar,
   Clock,
-  Star
+  Star,
+  ExternalLink
 } from 'lucide-react'
+import axios from 'axios'
+
+const API_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/api'
 
 function DashboardContent({ activeTab }) {
+  const router = useRouter()
+
+  // Alohida sahifalarga yo'naltirish
+  const handleNavigation = (path) => {
+    router.push(path)
+  }
+
   if (activeTab === 'dashboard') {
-    return <DashboardOverview />
+    return <DashboardOverview onNavigate={handleNavigation} />
   }
   
   if (activeTab === 'tournaments') {
-    return <TournamentsSection />
+    return <TournamentsSection onNavigate={handleNavigation} />
   }
   
   if (activeTab === 'games') {
-    return <GamesSection />
+    // Redirect to games page instead of trying to render GamesSection
+    router.push('/games')
+    return null
   }
   
   if (activeTab === 'my-games') {
-    return <MyGamesSection />
+    // Redirect to games page instead of trying to render MyGamesSection
+    router.push('/games')
+    return null
+  }
+  
+  // Boshqa tablar uchun alohida sahifalarga yo'naltirish
+  if (activeTab === 'wallet') {
+    router.push('/wallet')
+    return null
+  }
+  
+  if (activeTab === 'profile') {
+    router.push('/profile')
+    return null
+  }
+  
+  if (activeTab === 'achievements') {
+    router.push('/achievements')
+    return null
+  }
+  
+  if (activeTab === 'friends') {
+    router.push('/friends')
+    return null
+  }
+  
+  if (activeTab === 'history') {
+    router.push('/history')
+    return null
+  }
+  
+  if (activeTab === 'settings') {
+    router.push('/settings')
+    return null
   }
   
   return (
@@ -39,12 +86,19 @@ function DashboardContent({ activeTab }) {
       </h2>
       <div className="bg-gray-800 rounded-xl p-8 shadow-sm">
         <p className="text-gray-300">Bu bo'lim hozirda ishlab chiqilmoqda...</p>
+        <button 
+          onClick={() => router.push(`/${activeTab}`)}
+          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+        >
+          <ExternalLink size={16} />
+          <span>Alohida sahifada ochish</span>
+        </button>
       </div>
     </div>
   )
 }
 
-function DashboardOverview() {
+function DashboardOverview({ onNavigate }) {
   const stats = [
     {
       title: 'Jami G\'alaba',
@@ -132,7 +186,10 @@ function DashboardOverview() {
           <div className="p-6 border-b border-gray-700">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white">Oxirgi O'yinlar</h3>
-              <button className="text-blue-400 hover:text-blue-300 flex items-center space-x-1">
+              <button 
+                onClick={() => onNavigate('/history')}
+                className="text-blue-400 hover:text-blue-300 flex items-center space-x-1"
+              >
                 <span>Barchasini ko'rish</span>
                 <ChevronRight size={16} />
               </button>
@@ -171,7 +228,10 @@ function DashboardOverview() {
           <div className="p-6 border-b border-gray-700">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white">Kelayotgan Turnirlar</h3>
-              <button className="text-blue-400 hover:text-blue-300 flex items-center space-x-1">
+              <button 
+                onClick={() => onNavigate('/tournaments')}
+                className="text-blue-400 hover:text-blue-300 flex items-center space-x-1"
+              >
                 <span>Barchasini ko'rish</span>
                 <ChevronRight size={16} />
               </button>
@@ -180,7 +240,11 @@ function DashboardOverview() {
           <div className="p-6">
             <div className="space-y-4">
               {upcomingTournaments.map((tournament, index) => (
-                <div key={index} className="p-4 rounded-lg border border-gray-600 hover:border-blue-500 transition-colors cursor-pointer">
+                <div 
+                  key={index} 
+                  className="p-4 rounded-lg border border-gray-600 hover:border-blue-500 transition-colors cursor-pointer"
+                  onClick={() => onNavigate('/tournaments')}
+                >
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium text-white">{tournament.name}</h4>
                     <span className="text-lg font-bold text-green-400">{tournament.prize}</span>
@@ -210,42 +274,11 @@ function DashboardOverview() {
   )
 }
 
-function TournamentsSection() {
-  const tournaments = [
-    {
-      id: 1,
-      name: 'CS:GO World Championship',
-      game: 'CS:GO',
-      prize: '$10,000',
-      participants: '128 jamoa',
-      startDate: '20 Avgust',
-      status: 'Ro\'yxatdan o\'tish ochiq',
-      image: '/turnir/cs.png',
-      difficulty: 'Pro'
-    },
-    {
-      id: 2,
-      name: 'Dota 2 International Cup',
-      game: 'Dota 2',
-      prize: '$8,000',
-      participants: '64 jamoa',
-      startDate: '25 Avgust',
-      status: 'Tez orada',
-      image: '/turnir/dota.png',
-      difficulty: 'Advanced'
-    },
-    {
-      id: 3,
-      name: 'PUBG Battle Royale',
-      game: 'PUBG',
-      prize: '$5,000',
-      participants: '100 o\'yinchi',
-      startDate: '30 Avgust',
-      status: 'Ro\'yxatdan o\'tish ochiq',
-      image: '/turnir/pubg_turnir.png',
-      difficulty: 'Intermediate'
-    }
-  ]
+function TournamentsSection({ onNavigate }) {
+  const [tournaments, setTournaments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+ 
 
   return (
     <div className="p-8">
@@ -254,19 +287,59 @@ function TournamentsSection() {
           <h1 className="text-3xl font-bold text-white">Turnirlar</h1>
           <p className="text-gray-400 mt-1">Eng yaxshi turnirlarда qatnashing va g'alaba qozoning</p>
         </div>
-        <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all">
-          Turnir yaratish
-        </button>
+        <div className="flex space-x-4">
+          <button 
+            onClick={() => onNavigate('/tournaments')}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all flex items-center space-x-2"
+          >
+            <ExternalLink size={18} />
+            <span>To'liq sahifa</span>
+          </button>
+          <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all">
+            Turnir yaratish
+          </button>
+        </div>
       </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 overflow-hidden animate-pulse">
+              <div className="h-48 bg-gray-700"></div>
+              <div className="p-6">
+                <div className="h-5 bg-gray-700 rounded mb-2"></div>
+                <div className="h-4 bg-gray-700 rounded mb-4 w-3/4"></div>
+                <div className="space-y-2">
+                  <div className="h-3 bg-gray-700 rounded"></div>
+                  <div className="h-3 bg-gray-700 rounded"></div>
+                  <div className="h-3 bg-gray-700 rounded"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <div className="text-center text-red-400 p-8">
+          <p>{error}</p>
+          <p className="text-sm text-gray-500 mt-2">Demo ma'lumotlar ko'rsatilmoqda</p>
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tournaments.map((tournament) => (
-          <div key={tournament.id} className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 hover:shadow-lg transition-all overflow-hidden">
+          <div 
+            key={tournament.id} 
+            className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 hover:shadow-lg transition-all overflow-hidden cursor-pointer"
+            onClick={() => onNavigate('/tournaments')}
+          >
             <div className="relative h-48">
               <img 
                 src={tournament.image} 
                 alt={tournament.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = '/logo/logo-removebg-preview.png';
+                }}
               />
               <div className="absolute top-4 left-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -320,154 +393,9 @@ function TournamentsSection() {
   )
 }
 
-function GamesSection() {
-  const games = [
-    { name: 'Counter-Strike 2', players: '1.2M', rating: 4.8, image: '/game/cs.png', category: 'FPS' },
-    { name: 'Dota 2', players: '800K', rating: 4.7, image: '/game/dota.png', category: 'MOBA' },
-    { name: 'PUBG', players: '2.1M', rating: 4.6, image: '/img/pubg.jpg', category: 'Battle Royale' },
-    { name: 'Clash Royale', players: '500K', rating: 4.5, image: '/game/clash.jpg', category: 'Strategy' },
-  ]
+ 
+ 
 
-  return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white">O'yinlar</h1>
-          <p className="text-gray-400 mt-1">Sevimli o'yinlaringizni tanlang va turnirlarда qatnashing</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {games.map((game, index) => (
-          <div key={index} className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 hover:shadow-lg transition-all overflow-hidden cursor-pointer group">
-            <div className="relative h-48">
-              <img 
-                src={game.image} 
-                alt={game.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="font-semibold text-lg">{game.name}</h3>
-                <p className="text-sm opacity-90">{game.category}</p>
-              </div>
-              <div className="absolute top-4 right-4">
-                <span className="bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                  {game.players} faol
-                </span>
-              </div>
-            </div>
-            
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        size={16} 
-                        className={i < Math.floor(game.rating) ? 'text-yellow-400 fill-current' : 'text-gray-600'}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm font-medium text-white">{game.rating}</span>
-                </div>
-                <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
-                  O'ynash
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function MyGamesSection() {
-  const myGames = [
-    { 
-      name: 'Counter-Strike 2', 
-      level: 'Global Elite', 
-      hours: '2,450', 
-      winRate: '78%',
-      lastPlayed: '2 soat oldin',
-      image: '/game/cs.png',
-      stats: { kills: '45,230', deaths: '12,890', kd: '3.51' }
-    },
-    { 
-      name: 'Dota 2', 
-      level: 'Divine III', 
-      hours: '1,890', 
-      winRate: '65%',
-      lastPlayed: '1 kun oldin',
-      image: '/game/dota.png',
-      stats: { mmr: '5,240', matches: '1,890', winRate: '65%' }
-    }
-  ]
-
-  return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Mening O'yinlarim</h1>
-          <p className="text-gray-400 mt-1">O'yinlarinizdagi progress va statistikalarni ko'ring</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {myGames.map((game, index) => (
-          <div key={index} className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-center space-x-4 mb-6">
-                <img src={game.image} alt={game.name} className="w-16 h-16 rounded-lg object-cover" />
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-white">{game.name}</h3>
-                  <div className="flex items-center space-x-4 text-sm text-gray-400 mt-1">
-                    <span>Daraja: <span className="font-medium text-blue-400">{game.level}</span></span>
-                    <span>•</span>
-                    <span>{game.hours} soat o'ynagan</span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-green-400">{game.winRate}</div>
-                  <div className="text-xs text-gray-500">G'alaba foizi</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {Object.entries(game.stats).map(([key, value]) => (
-                  <div key={key} className="text-center p-3 bg-gray-700 rounded-lg">
-                    <div className="text-lg font-bold text-white">{value}</div>
-                    <div className="text-xs text-gray-400 capitalize">{key}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Oxirgi o'yin: {game.lastPlayed}</span>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                  O'ynash
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function getTabTitle(tab) {
-  const titles = {
-    achievements: 'Yutuqlar',
-    friends: 'Do\'stlar',
-    wallet: 'Hamyon',
-    history: 'Tarix',
-    profile: 'Profil',
-    settings: 'Sozlamalar'
-  }
-  return titles[tab] || 'Dashboard'
-}
+ 
 
 export default DashboardContent

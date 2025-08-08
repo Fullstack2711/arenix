@@ -8,6 +8,8 @@ const nextConfig = {
       'images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com',
       'i.pinimg.com',
       'www.pngpacks.com',
+      'e507d8f11835.ngrok-free.app' ,
+      '920b73597eff.ngrok-free.app'
     ],
   },
 

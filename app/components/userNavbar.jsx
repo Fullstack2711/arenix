@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Bell, User, Search, LogOut, ChevronDown, Bitcoin } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { logout } from '../utils/api'
 import { clearTokens, getRefreshToken } from '../../lib/auth'
 import toast from 'react-hot-toast'
 import Image from 'next/image'
+import { Bell, User, Search, LogOut, ChevronDown, Settings, X } from 'lucide-react'
 
 function userNavbar() {
   const router = useRouter()
@@ -174,9 +174,7 @@ function userNavbar() {
                 onClick={() => setIsWithdrawModalOpen(false)}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X size={24} />
               </button>
             </div>
 

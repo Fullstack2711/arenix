@@ -19,6 +19,24 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   const pathname = usePathname()
   const isDashboard = pathname?.startsWith('/user-dashboard')
+  
+  // User sidebar sahifalari ro'yxati
+  const userSidebarPages = [
+    '/user-dashboard',
+    '/profile',
+    '/settings',
+    '/tournaments',
+    '/achievements',
+    '/friends',
+    '/history',
+    '/wallet',
+    '/contact',
+    '/oyin',
+    '/games'
+  ]
+  
+  // Agar yo'l user sidebar sahifalaridan birida bo'lsa, navbar va footerni yashirish
+  const shouldHideNavAndFooter = userSidebarPages.some(page => pathname?.startsWith(page))
 
   return (
     <html lang="en">
@@ -26,9 +44,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <StyledComponentsRegistry>
-          {!isDashboard && <Navbar />}
+          {!shouldHideNavAndFooter && <Navbar />}
           {children}
-          {!isDashboard && <Footer />}
+          {!shouldHideNavAndFooter && <Footer />}
         </StyledComponentsRegistry>
       </body>
     </html>
