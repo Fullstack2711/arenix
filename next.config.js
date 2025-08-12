@@ -9,7 +9,15 @@ const nextConfig = {
       'i.pinimg.com',
       'www.pngpacks.com',
       'e507d8f11835.ngrok-free.app' ,
-      '920b73597eff.ngrok-free.app'
+      '920b73597eff.ngrok-free.app',
+      'b977eb7cc998.ngrok-free.app',
+      '8bc42e415395.ngrok-free.app'
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+      },
     ],
   },
 
